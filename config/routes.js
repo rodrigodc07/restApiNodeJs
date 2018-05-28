@@ -1,9 +1,9 @@
 const express = require('express')
 
 module.exports = function (server){
-    // ROUTES FOR OUR API
-// =============================================================================
 var router = express.Router();              // get an instance of the express Router
+var Bear  = require('../app/models/bear');
+
 
 // middleware to use for all requests
 router.use(function(req, res, next) {
@@ -62,7 +62,7 @@ router.route('/bears')
             // update the bear with this id (accessed at PUT http://localhost:8080/api/bears/:bear_id)
         .put(function(req, res) {
             // use our bear model to find the bear we want
-            Bear.findById(req.params.bear_id, function(err, bear) {
+            Bear.findById(req.params.bear_name, function(err, bear) {
 
                 if (err)
                     res.send(err);
@@ -81,7 +81,7 @@ router.route('/bears')
         })
         .delete(function(req, res) {
             Bear.remove({
-                _id: req.params.bear_id
+                _id: req.params.bear_name
             }, function(err, bear) {
                 if (err)
                     res.send(err);
