@@ -2,7 +2,7 @@ const express = require('express')
 
 module.exports = function (server){
 var router = express.Router();              // get an instance of the express Router
-var Bear  = require('../app/models/bear');
+var Seller  = require('../app/models/seller');
 
 
 // middleware to use for all requests
@@ -19,70 +19,70 @@ router.get('/', function(req, res) {
 
 // more routes for our API will happen here
 
-// on routes that end in /bears
+// on routes that end in /sellers
 // ----------------------------------------------------
-router.route('/bears')
+router.route('/sellers')
 
-    // create a bear (accessed at POST http://localhost:8080/api/bears)
+    // create a seller (accessed at POST http://localhost:8080/api/sellers)
     .post(function(req, res) {
 
-        var bear = new Bear();      // create a new instance of the Bear model
-        bear.name = req.body.name;  // set the bears name (comes from the request)
+        var seller = new Seller();      // create a new instance of the Seller model
+        seller.name = req.body.name;  // set the sellers name (comes from the request)
 
-        // save the bear and check for errors
-        bear.save(function(err) {
+        // save the seller and check for errors
+        seller.save(function(err) {
             if (err)
                 res.send(err);
 
-            res.json({ message: 'Bear created!' });
+            res.json({ message: 'Seller created!' });
         });
 
     })  
     .get(function(req, res) {
-        Bear.find(function(err, bears) {
+        Seller.find(function(err, sellers) {
             if (err)
                 res.send(err);
 
-            res.json(bears);
+            res.json(sellers);
         });
     })
 
-    // on routes that end in /bears/:bear_id
+    // on routes that end in /sellers/:seller_id
     // ----------------------------------------------------
-    router.route('/bears/:bear_name')
+    router.route('/sellers/:seller_name')
 
-        // get the bear with that id (accessed at GET http://localhost:8080/api/bears/:bear_id)
+        // get the seller with that id (accessed at GET http://localhost:8080/api/sellers/:seller_id)
         .get(function(req, res) {
-            Bear.find({name: req.params.bear_name}, function(err, bear) {
+            Seller.find({name: req.params.seller_name}, function(err, seller) {
                 if (err)
                     res.send(err);
-                res.json(bear);
+                res.json(seller);
             });
         })
-            // update the bear with this id (accessed at PUT http://localhost:8080/api/bears/:bear_id)
+            // update the seller with this id (accessed at PUT http://localhost:8080/api/sellers/:seller_id)
         .put(function(req, res) {
-            // use our bear model to find the bear we want
-            Bear.findById(req.params.bear_name, function(err, bear) {
+            // use our seller model to find the seller we want
+            Seller.findById(req.params.seller_name, function(err, seller) {
 
                 if (err)
                     res.send(err);
 
-                bear.name = req.body.name;  // update the bears info
+                seller.name = req.body.name;  // update the sellers info
 
-                // save the bear
-                bear.save(function(err) {
+                // save the seller
+                seller.save(function(err) {
                     if (err)
                         res.send(err);
 
-                    res.json({ message: 'Bear updated!' });
+                    res.json({ message: 'Seller updated!' });
                 });
 
             });
         })
         .delete(function(req, res) {
-            Bear.remove({
-                _id: req.params.bear_name
-            }, function(err, bear) {
+            Seller.remove({
+                _id: req.params.seller_name
+            }, function(err, seller) {
                 if (err)
                     res.send(err);
 

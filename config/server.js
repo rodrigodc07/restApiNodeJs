@@ -15,8 +15,6 @@ server.use(bodyParser.json());
 
 var port = process.env.PORT || 8080;        // set our port
 
-var Bear  = require('../app/models/bear');
-
 // START THE SERVER
 // =============================================================================
 server.listen(port);
