@@ -1,93 +1,94 @@
-const express = require('express')
+var express = require('express')
+
+function saveInMongo(object,res) {
+    object.save(function(err) {
+        if (err)
+            res.send(err);
+
+        res.json({ message: 'Seller created!' });
+    });
+}
+
+function httpDel(req, res, object) {
+    object.remove({
+        _id: req.params.seller_id
+    }, function(err, seller) {
+        if (err)
+            res.send(err);
+
+        res.json({ message: 'Successfully deleted' });
+    });
+}
+
+function createObj(object, req, parms){
+    parms.forEach(function(value){
+        object[value] = req [value];
+    })
+    return object
+}
 
 module.exports = function (server){
-var router = express.Router();              // get an instance of the express Router
-var Seller  = require('../app/models/seller');
-
+    var router = express.Router();              // get an instance of the express Router
+    var Seller  = require('../app/models/seller');
+    var Store  = require('../app/models/store');
+    var Product  = require('../app/models/product');
 
 // middleware to use for all requests
-router.use(function(req, res, next) {
-    // do logging
-    console.log('Something is happening.');
-    next(); // make sure we go to the next routes and don't stop here
-});
+    router.use(function(req, res, next) {
+        // do logging
+        console.log('Something is happening.');
+        next(); // make sure we go to the next routes and don't stop here
+    });
 
 // test route to make sure everything is working (accessed at GET http://localhost:8080/api)
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!' });   
-});
+    router.get('/', function(req, res) {
+        res.json({ message: 'hooray! welcome to our api!' });
+    });
 
 // more routes for our API will happen here
 
 // on routes that end in /sellers
 // ----------------------------------------------------
-router.route('/sellers')
+    router.route('/sellers')
 
     // create a seller (accessed at POST http://localhost:8080/api/sellers)
-    .post(function(req, res) {
+        .post(function(req, res) {
 
-        var seller = new Seller();      // create a new instance of the Seller model
-        seller.name = req.body.name;  // set the sellers name (comes from the request)
+            var seller = new Seller();      // create a new instance of the Seller model
+            saveInMongo(createObj(seller,req.body,["name"]),res)
 
-        // save the seller and check for errors
-        seller.save(function(err) {
-            if (err)
-                res.send(err);
+        })
+        .get(function(req, res) {
+            Seller.find(function(err, sellers) {
+                if (err)
+                    res.send(err);
 
-            res.json({ message: 'Seller created!' });
-        });
-
-    })  
-    .get(function(req, res) {
-        Seller.find(function(err, sellers) {
-            if (err)
-                res.send(err);
-
-            res.json(sellers);
-        });
-    })
+                res.json(sellers);
+            });
+        })
 
     // on routes that end in /sellers/:seller_id
     // ----------------------------------------------------
-    router.route('/sellers/:seller_name')
+    router.route('/sellers/:seller_id')
 
-        // get the seller with that id (accessed at GET http://localhost:8080/api/sellers/:seller_id)
         .get(function(req, res) {
-            Seller.find({name: req.params.seller_name}, function(err, seller) {
+            Seller.find({name: req.params.seller_id}, function(err, seller) {
                 if (err)
                     res.send(err);
                 res.json(seller);
             });
         })
-            // update the seller with this id (accessed at PUT http://localhost:8080/api/sellers/:seller_id)
         .put(function(req, res) {
             // use our seller model to find the seller we want
-            Seller.findById(req.params.seller_name, function(err, seller) {
+            Seller.findById(req.params.seller_id, function(err, seller) {
 
                 if (err)
                     res.send(err);
-
-                seller.name = req.body.name;  // update the sellers info
-
-                // save the seller
-                seller.save(function(err) {
-                    if (err)
-                        res.send(err);
-
-                    res.json({ message: 'Seller updated!' });
-                });
-
+                saveInMongo(createObj(seller,req.body,["name"]),res)
             });
         })
         .delete(function(req, res) {
-            Seller.remove({
-                _id: req.params.seller_name
-            }, function(err, seller) {
-                if (err)
-                    res.send(err);
-
-                res.json({ message: 'Successfully deleted' });
-            });
+            httpDel(req,res,Seller)
         });
 
     // REGISTER OUR ROUTES -------------------------------
