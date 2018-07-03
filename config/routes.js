@@ -5,19 +5,20 @@ function saveInMongo(object,res) {
         if (err)
             res.send(err);
 
-        res.json({ message: 'Seller created!' });
-        console.log(object)
+        res.json({ message: 'ID = ' + object.id });
     });
 }
 
-function httpDel(req, res, object) {
+function httpDel(object, id, res) {
     object.remove({
-        _id: req.params.seller_id
+        _id: id
     }, function(err, seller) {
-        if (err)
+        if(seller == null)
+            res.json({ message: "Id Invalido" })
+        else if (err)
             res.send(err);
-
-        res.json({ message: 'Successfully deleted' });
+        else
+            res.json({ message: 'Successfully deleted' });
     });
 }
 
@@ -71,10 +72,10 @@ module.exports = function (server){
 
     // on routes that end in /sellers/:seller_id
     // ----------------------------------------------------
-    router.route('/sellers/:seller_id')
+    router.route('/sellers/:id')
 
         .get(function(req, res) {
-            Seller.find({_id: req.params.seller_id}, function(err, seller) {
+            Seller.find({_id: req.params.id}, function(err, seller) {
                 if (err)
                     res.send(err);
                 res.json(seller);
@@ -82,15 +83,15 @@ module.exports = function (server){
         })
         .put(function(req, res) {
             // use our seller model to find the seller we want
-            Seller.findById(req.params.seller_id, function(err, seller) {
-
-                if (err)
-                    res.send(err);
-                saveInMongo(createObj(seller,req.body),res)
+            Seller.findById(req.params.id, function(err, seller) {
+                if (seller == null)
+                    res.send("Id Invalido");
+                else
+                    saveInMongo(createObj(seller,req.body),res)
             });
         })
         .delete(function(req, res) {
-            httpDel(req,res,Seller)
+            httpDel(Seller,req.params.id,res)
         });
     router.route('/products')
 
@@ -112,10 +113,10 @@ module.exports = function (server){
 
     // on routes that end in /products/:product_id
     // ----------------------------------------------------
-    router.route('/products/:product_id')
+    router.route('/products/:id')
 
         .get(function(req, res) {
-            Product.find({_id: req.params.product_id}, function(err, product) {
+            Product.find({_id: req.params.id}, function(err, product) {
                 if (err)
                     res.send(err);
                 res.json(product);
@@ -124,14 +125,57 @@ module.exports = function (server){
         .put(function(req, res) {
             // use our product model to find the product we want
             Product.findById(req.params.product_id, function(err, product) {
-
-                if (err)
-                    res.send(err);
-                saveInMongo(createObj(product,req.body),res)
+                if (product == null)
+                    res.send("Id Invalido");
+                else
+                    saveInMongo(createObj(product,req.body),res)
             });
         })
         .delete(function(req, res) {
-            httpDel(req,res,Product)
+            httpDel(Product,req.params.id,res)
+            Store.find({ name: 'john'}, function (err, docs) {return docs});
+        });
+
+    router.route('/stores')
+
+    // create a store (accessed at POST http://localhost:8080/api/stores)
+        .post(function(req, res) {
+
+            var store = new Store();      // create a new instance of the Store model
+            saveInMongo(createObj(store,req.body),res)
+
+        })
+        .get(function(req, res) {
+            Store.find(function(err, stores) {
+                if (err)
+                    res.send(err);
+
+                res.json(stores);
+            });
+        })
+
+    // on routes that end in /stores/:store_id
+    // ----------------------------------------------------
+    router.route('/stores/:id')
+
+        .get(function(req, res) {
+            Store.find({_id: req.params.id}, function(err, store) {
+                if (err)
+                    res.send(err);
+                res.json(store);
+            });
+        })
+        .put(function(req, res) {
+            // use our store model to find the store we want
+            Store.findById(req.params.store_id, function(err, store) {
+                if (store == null)
+                    res.send("Id Invalido");
+                else
+                    saveInMongo(createObj(store,req.body),res)
+            });
+        })
+        .delete(function(req, res) {
+            httpDel(Store,req.params.id,res)
         });
 
     // REGISTER OUR ROUTES -------------------------------
