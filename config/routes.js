@@ -1,4 +1,4 @@
-var express = require('express')
+var express = require('express');
 
 function saveInMongo(object,res) {
     object.save(function(err) {
@@ -14,7 +14,7 @@ function httpDel(object, id, res) {
         _id: id
     }, function(err, seller) {
         if(seller == null)
-            res.json({ message: "Id Invalido" })
+            res.json({ message: "Id Invalido" });
         else if (err)
             res.send(err);
         else
@@ -68,7 +68,7 @@ module.exports = function (server){
 
                 res.json(sellers);
             });
-        })
+        });
 
     // on routes that end in /sellers/:seller_id
     // ----------------------------------------------------
@@ -109,7 +109,7 @@ module.exports = function (server){
 
                 res.json(products);
             });
-        })
+        });
 
     // on routes that end in /products/:product_id
     // ----------------------------------------------------
@@ -132,7 +132,7 @@ module.exports = function (server){
             });
         })
         .delete(function(req, res) {
-            httpDel(Product,req.params.id,res)
+            httpDel(Product,req.params.id,res);
             Store.find({ name: 'john'}, function (err, docs) {return docs});
         });
 
@@ -152,7 +152,7 @@ module.exports = function (server){
 
                 res.json(stores);
             });
-        })
+        });
 
     // on routes that end in /stores/:store_id
     // ----------------------------------------------------
@@ -181,4 +181,4 @@ module.exports = function (server){
     // REGISTER OUR ROUTES -------------------------------
     // all of our routes will be prefixed with /api
     server.use('/api', router);
-}
+};
