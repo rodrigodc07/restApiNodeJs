@@ -124,7 +124,7 @@ module.exports = function (server){
         })
         .put(function(req, res) {
             // use our product model to find the product we want
-            Product.findById(req.params.product_id, function(err, product) {
+            Product.findById(req.params.id, function(err, product) {
                 if (product == null)
                     res.send("Id Invalido");
                 else
@@ -167,7 +167,7 @@ module.exports = function (server){
         })
         .put(function(req, res) {
             // use our store model to find the store we want
-            Store.findById(req.params.store_id, function(err, store) {
+            Store.findById(req.params.id, function(err, store) {
                 if (store == null)
                     res.send("Id Invalido");
                 else
