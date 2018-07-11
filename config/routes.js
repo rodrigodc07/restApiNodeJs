@@ -76,9 +76,11 @@ module.exports = function (server){
             Seller.find({_id: req.params.id}, function(err, seller) {
                 if (err)
                     res.status(422).send(err);
-                if(seller == null)
-                    res.status(404).send("ID Invalido")
-                res.json(seller);
+                else
+                    if(seller.length === 0)
+                        res.status(404).send("ID Invalido")
+                    else
+                        res.json(seller);
             });
         })
         .put(function(req, res) {
@@ -120,9 +122,11 @@ module.exports = function (server){
             Product.find({_id: req.params.id}, function(err, product) {
                 if (err)
                     res.status(422).send(err);
-                if (product.length === 0)
+                else
+                if(product.length === 0)
                     res.status(404).send("ID Invalido")
-                res.json(product);
+                else
+                    res.json(product);
             });
         })
         .put(function(req, res) {
@@ -166,9 +170,11 @@ module.exports = function (server){
             Store.find({_id: req.params.id}, function(err, store) {
                 if (err)
                     res.status(422).send(err);
+                else
                 if(store.length === 0)
                     res.status(404).send("ID Invalido")
-                res.json(store);
+                else
+                    res.json(store);
             });
         })
         .put(function(req, res) {
