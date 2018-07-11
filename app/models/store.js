@@ -6,7 +6,7 @@ var Schema       = mongoose.Schema;
 var StoreSchema   = new Schema({
     name:{ type:String ,required:true},
     sellerName:{ type:String ,required:true},
-    address:{ type:String ,required:true},
+    address:{ type:String },
     stock:[String]
 });
 
